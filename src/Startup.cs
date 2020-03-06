@@ -18,21 +18,29 @@ namespace CoreCodeCamp
   {
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddDbContext<CampContext>();
-      services.AddScoped<ICampRepository, CampRepository>();
+        services.AddDbContext<CampContext>();
+        services.AddScoped<ICampRepository, CampRepository>();
 
-      services.AddMvc()
-        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-    }
+            //services.AddMvc(option => option.EnableEndpointRouting = false);
+            //services.AddControllers(options => options.EnableEndpointRouting = false);
+            services.AddControllers();
+        }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-      
-      app.UseMvc();
-    }
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+            //app.UseMvc();
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+
+        }
   }
 }
