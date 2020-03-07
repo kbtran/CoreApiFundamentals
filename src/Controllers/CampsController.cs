@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using CoreCodeCamp.Data;
 using CoreCodeCamp.Models;
@@ -35,11 +36,30 @@ namespace CoreCodeCamp.Controllers
            
                 return _mapper.Map<CampModel[]>(camps);
             }
-            catch
+            catch (Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
             
         }
+
+        [HttpGet("{moniker}")]
+        public async Task<ActionResult<CampModel>> Get(string moniker)
+        {
+            try
+            {
+                var camp = await _campRepository.GetCampAsync(moniker);
+
+                if (camp == null) return NotFound();
+
+                return _mapper.Map<CampModel>(camp);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+
+            }
+        }
+
     }
 }
