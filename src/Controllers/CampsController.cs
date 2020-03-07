@@ -44,11 +44,11 @@ namespace CoreCodeCamp.Controllers
         }
 
         [HttpGet("{moniker}")]
-        public async Task<ActionResult<CampModel>> Get(string moniker)
+        public async Task<ActionResult<CampModel>> Get(string moniker, bool includeTalks = false)
         {
             try
             {
-                var camp = await _campRepository.GetCampAsync(moniker);
+                var camp = await _campRepository.GetCampAsync(moniker, includeTalks);
 
                 if (camp == null) return NotFound();
 
