@@ -86,12 +86,18 @@ namespace CoreCodeCamp.Controllers
         [HttpPost]
         public async Task<ActionResult<CampModel>> Post(CampModel campModel)
         {
-            //adds a new camp and return the location and data
+            // Adds a new camp and return the location and data
             try
             {
+                Camp existingCamp = await _campRepository.GetCampAsync(campModel.Moniker);
+                
+                if (existingCamp != null)
+                {
+                    return BadRequest("Moniker already in use");
+                }
+
                 // Get path of HttpGet
-                var location = _linkGenerator.GetPathByAction("Get",
-                   "Camps", new { moniker = campModel.Moniker });
+                string location = _linkGenerator.GetPathByAction("Get", "Camps", new { moniker = campModel.Moniker });
 
                 if (string.IsNullOrWhiteSpace(location))
                 {
