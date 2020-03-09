@@ -111,15 +111,46 @@ namespace CoreCodeCamp.Controllers
                 {
                     return Created("", _mapper.Map<CampModel>(camp));
                 }
-             
-                return Ok();
             }
             catch (Exception e)
             {
                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure"); 
             }
 
+            return BadRequest();
         }
-   
+
+
+        [HttpPut("{moniker}")]
+        public async Task<ActionResult<CampModel>> Put(string moniker, CampModel campModel)
+        {
+            try
+            {
+                // Update a camp
+                Camp existingCamp = await _campRepository.GetCampAsync(moniker);
+                if (existingCamp == null) return NotFound($"Could not find the camp with moniker {moniker}");
+
+                // CampId and LocationId are keys in their respective table so they can't be modified.
+                int existingCampId = existingCamp.CampId;
+                int existingLocationId = existingCamp.Location.LocationId;
+
+                _mapper.Map(campModel, existingCamp);
+
+                // Set the previous value back. Need to a better way to handle this
+                existingCamp.CampId = existingCampId;
+                existingCamp.Location.LocationId = existingLocationId;
+
+                if (await _campRepository.SaveChangesAsync())
+                {
+                    return _mapper.Map<CampModel>(existingCamp);
+                }
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+            return BadRequest();
+        }
+
     }
 }
