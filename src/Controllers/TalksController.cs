@@ -46,7 +46,7 @@ namespace CoreCodeCamp.Controllers
         {
             try
             {
-                var talk = await _campRepository.GetTalkByMonikerAsync(moniker, id, true);
+                Talk talk = await _campRepository.GetTalkByMonikerAsync(moniker, id, true);
                 return _mapper.Map<TalkModel>(talk);
             }
             catch (Exception)
@@ -82,14 +82,57 @@ namespace CoreCodeCamp.Controllers
                 }
                 else
                 {
-                    return BadRequest("Faled to save new Talk");                 
+                    return BadRequest("Failed to save new Talk");                 
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to get that talk");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to save new Talk.");
             }
 
+        }
+
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<TalkModel>> Put(string moniker, int id, TalkModel talkModel)
+        {
+            try
+            {
+                Talk talk = await _campRepository.GetTalkByMonikerAsync(moniker, id, true);
+                if (talk == null) return NotFound("Could not find talk, " + moniker);
+
+                _mapper.Map(talkModel, talk);
+
+                // TalkId is unique so it can't be updated. Put the the orginial value back before updating
+                // Need to find a better way to handle this.
+                talk.TalkId = id;
+                talkModel.TalkId = id;
+
+
+                if (talkModel.Speaker != null)
+                {
+                    Speaker speaker = await _campRepository.GetSpeakerAsync(talkModel.Speaker.SpeakerId);
+                    if(speaker !=null)
+                    {
+                        talk.Speaker = speaker;
+                    }
+                }
+                
+
+                if (await _campRepository.SaveChangesAsync())
+                {
+                    return  _mapper.Map<TalkModel>(talk);
+                }
+                else
+                {
+                    return BadRequest("Failed to update database");
+                }
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update database");
+            }
         }
     }
 }
