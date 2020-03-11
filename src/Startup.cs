@@ -19,7 +19,7 @@ namespace CoreCodeCamp
             services.AddApiVersioning(opt => 
             {
                 opt.AssumeDefaultVersionWhenUnspecified = true;
-                opt.DefaultApiVersion = new ApiVersion(1, 1);
+                opt.DefaultApiVersion = new ApiVersion(2, 0);
                 opt.ReportApiVersions = true;
 
             });
