@@ -2,6 +2,7 @@
 using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreCodeCamp
@@ -15,7 +16,12 @@ namespace CoreCodeCamp
 
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddApiVersioning();
+            services.AddApiVersioning(opt => 
+            {
+                opt.DefaultApiVersion = new ApiVersion(1, 1);
+                opt.ReportApiVersions = true;
+
+            });
 
             //services.AddMvc(option => option.EnableEndpointRouting = false);
             //services.AddControllers(options => options.EnableEndpointRouting = false);
