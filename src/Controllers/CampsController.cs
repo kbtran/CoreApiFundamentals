@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore.Internal;
 namespace CoreCodeCamp.Controllers
 {
     [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [ApiVersion("1.1")]
     [ApiController]
     public class CampsController : ControllerBase
     {
@@ -49,11 +51,31 @@ namespace CoreCodeCamp.Controllers
         }
 
         [HttpGet("{moniker}")]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult<CampModel>> Get(string moniker, bool includeTalks = false)
         {
             try
             {
                 Camp camp = await _campRepository.GetCampAsync(moniker, includeTalks);
+
+                if (camp == null) return NotFound();
+
+                return _mapper.Map<CampModel>(camp);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+
+            }
+        }
+
+        [HttpGet("{moniker}")]
+        [MapToApiVersion("1.1")]
+        public async Task<ActionResult<CampModel>> Get11(string moniker, bool includeTalks = false)
+        {
+            try
+            {
+                Camp camp = await _campRepository.GetCampAsync(moniker, true);
 
                 if (camp == null) return NotFound();
 
