@@ -2,12 +2,7 @@
 using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace CoreCodeCamp
 {
@@ -19,6 +14,8 @@ namespace CoreCodeCamp
             services.AddScoped<ICampRepository, CampRepository>();
 
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddApiVersioning();
 
             //services.AddMvc(option => option.EnableEndpointRouting = false);
             //services.AddControllers(options => options.EnableEndpointRouting = false);
