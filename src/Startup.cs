@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CoreCodeCamp.Controllers;
 using CoreCodeCamp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +23,7 @@ namespace CoreCodeCamp
                 opt.AssumeDefaultVersionWhenUnspecified = true;
                 opt.DefaultApiVersion = new ApiVersion(2, 0);
                 opt.ReportApiVersions = true;
-               
+
                 // The "ver" can be used instead of the default api-version
                 // opt.ApiVersionReader = new QueryStringApiVersionReader("ver");
 
@@ -33,6 +34,14 @@ namespace CoreCodeCamp
                 opt.ApiVersionReader = ApiVersionReader.Combine(
                     new QueryStringApiVersionReader("ver", "version"),
                     new HeaderApiVersionReader("X-Version"));
+
+                // Version by Controller
+                // opt.Conventions.Controller<TalksController>()
+                //        .HasApiVersion(new ApiVersion(1, 0))
+                //        .HasApiVersion(new ApiVersion(1, 1))
+                //        .Action(c => c.Delete(default(string), default(int)))
+                //            .MapToApiVersion(1, 1);
+
             });
 
             //services.AddMvc(option => option.EnableEndpointRouting = false);
